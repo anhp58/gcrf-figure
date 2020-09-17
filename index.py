@@ -193,5 +193,5 @@ if __name__ == '__main__':
     VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
     
     app = dash_call (PHILfig, VNfig)
-    server = app.server
+    # server = app.server
     app.run_server(debug=True)
