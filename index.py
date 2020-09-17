@@ -9,7 +9,6 @@ Created on Tue May 26 21:39:12 2020
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from app import server
 import plotly.graph_objects as go 
 
 import pandas as pd
