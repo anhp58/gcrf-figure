@@ -169,28 +169,70 @@ def dash_call (PHILfig, VNfig):
     ])
     return app
 
+#main 
+PHILhazard = "./data/Phil_DB.xlsx"
+VNhazard = "./data/VN_DB.xlsx"
+VNpolicy = "./data/VN_policy.xlsx"
+
+symbol_list = changeSymbol()
+
+xl, names = read_excel_sheets(PHILhazard)  
+mag_dict_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
+occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)   
+phil_db = mag_dict_list + occurence_dict_list
+PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
+
+xl, names = read_excel_sheets(VNpolicy)
+policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', 0, "rank", symbol_list)
+
+xl, names = read_excel_sheets(VNhazard)
+occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list)
+vn_db = occurence_dict_list + policy_mag_dict_list
+VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
+
+#dash
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
+app.layout = html.Div(children=[
+    html.H1(children='GCRF - Chronological Figure'),
+
+    # html.Div(children='''
+    #     Dash: A web application framework for Python.
+    # '''),
+
+    dcc.Graph(
+        id='P',
+        figure=PHILfig
+    ),
+    dcc.Graph(
+        id='VN',
+        figure=VNfig
+    )
+])
+
 if __name__ == '__main__':
     
-    PHILhazard = "./data/Phil_DB.xlsx"
-    VNhazard = "./data/VN_DB.xlsx"
-    VNpolicy = "./data/VN_policy.xlsx"
+    # PHILhazard = "./data/Phil_DB.xlsx"
+    # VNhazard = "./data/VN_DB.xlsx"
+    # VNpolicy = "./data/VN_policy.xlsx"
     
-    symbol_list = changeSymbol()
+    # symbol_list = changeSymbol()
     
-    xl, names = read_excel_sheets(PHILhazard)  
-    mag_dict_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
-    occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)   
-    phil_db = mag_dict_list + occurence_dict_list
-    PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
+    # xl, names = read_excel_sheets(PHILhazard)  
+    # mag_dict_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
+    # occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)   
+    # phil_db = mag_dict_list + occurence_dict_list
+    # PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
     
-    xl, names = read_excel_sheets(VNpolicy)
-    policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', 0, "rank", symbol_list)
+    # xl, names = read_excel_sheets(VNpolicy)
+    # policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', 0, "rank", symbol_list)
     
-    xl, names = read_excel_sheets(VNhazard)
-    occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list)
-    vn_db = occurence_dict_list + policy_mag_dict_list
-    VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
+    # xl, names = read_excel_sheets(VNhazard)
+    # occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list)
+    # vn_db = occurence_dict_list + policy_mag_dict_list
+    # VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
     
-    app = dash_call (PHILfig, VNfig)
+    # app = dash_call (PHILfig, VNfig)
     # server = app.server
     app.run_server(debug=True)
