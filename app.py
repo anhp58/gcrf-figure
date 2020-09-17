@@ -151,9 +151,7 @@ def TimeMagnitudeFigure (figure_data_list, title):
 
 def dash_call (PHILfig, VNfig):
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-    server = app.server
     app.layout = html.Div(children=[
         html.H1(children='GCRF - Chronological Figure'),
 
@@ -170,7 +168,7 @@ def dash_call (PHILfig, VNfig):
             figure=VNfig
         )
     ])
-    return app, server
+    return app
 
 if __name__ == '__main__':
     
@@ -195,4 +193,5 @@ if __name__ == '__main__':
     VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
     
     app, server = dash_call (PHILfig, VNfig)
-    app.run_server(debug=True,)
+    server = app.server
+    app.run_server(debug=True)
