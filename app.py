@@ -169,6 +169,10 @@ def dash_call (PHILfig, VNfig):
         )
     ])
     return app
+    
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 if __name__ == '__main__':
     
@@ -195,9 +199,6 @@ if __name__ == '__main__':
     # app = dash_call (PHILfig, VNfig)
 
     #dash init
-    external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-    server = app.server
     app.layout = html.Div(children=[
         html.H1(children='GCRF - Chronological Figure'),
 
