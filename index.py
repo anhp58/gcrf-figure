@@ -9,7 +9,7 @@ Created on Tue May 26 21:39:12 2020
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-
+from app import server
 import plotly.graph_objects as go 
 
 import pandas as pd
@@ -169,10 +169,6 @@ def dash_call (PHILfig, VNfig):
         )
     ])
     return app
-    
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
 
 if __name__ == '__main__':
     
@@ -196,24 +192,6 @@ if __name__ == '__main__':
     vn_db = occurence_dict_list + policy_mag_dict_list
     VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
     
-    # app = dash_call (PHILfig, VNfig)
-
-    #dash init
-    app.layout = html.Div(children=[
-        html.H1(children='GCRF - Chronological Figure'),
-
-        # html.Div(children='''
-        #     Dash: A web application framework for Python.
-        # '''),
-
-        dcc.Graph(
-            id='P',
-            figure=PHILfig
-        ),
-        dcc.Graph(
-            id='VN',
-            figure=VNfig
-        )
-    ])
-    # server = app.server
+    app = dash_call (PHILfig, VNfig)
+    server = app.server
     app.run_server(debug=True)
