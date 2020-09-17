@@ -178,7 +178,6 @@ if __name__ == '__main__':
     VNhazard = "./data/VN_DB.xlsx"
     VNpolicy = "./data/VN_policy.xlsx"
     
-    
     symbol_list = changeSymbol()
     
     xl, names = read_excel_sheets(PHILhazard)  
@@ -187,7 +186,6 @@ if __name__ == '__main__':
     phil_db = mag_dict_list + occurence_dict_list
     PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
     
-    
     xl, names = read_excel_sheets(VNpolicy)
     policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', 0, "rank", symbol_list)
     
@@ -195,7 +193,6 @@ if __name__ == '__main__':
     occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list)
     vn_db = occurence_dict_list + policy_mag_dict_list
     VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
-    
     
     app, server = dash_call (PHILfig, VNfig)
     app.run_server(debug=True,)
