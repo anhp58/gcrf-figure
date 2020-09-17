@@ -170,27 +170,6 @@ def dash_call (PHILfig, VNfig):
     ])
     return app
 
-# dash init
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
-app.layout = html.Div(children=[
-    html.H1(children='GCRF - Chronological Figure'),
-
-    # html.Div(children='''
-    #     Dash: A web application framework for Python.
-    # '''),
-
-    dcc.Graph(
-        id='P',
-        figure=PHILfig
-    ),
-    dcc.Graph(
-        id='VN',
-        figure=VNfig
-    )
-])
-
 if __name__ == '__main__':
     
     PHILhazard = "./data/Phil_DB.xlsx"
@@ -213,6 +192,6 @@ if __name__ == '__main__':
     vn_db = occurence_dict_list + policy_mag_dict_list
     VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
     
-    # app, server = dash_call (PHILfig, VNfig)
-    # server = app.server
+    app = dash_call (PHILfig, VNfig)
+    server = app.server
     app.run_server(debug=True)
