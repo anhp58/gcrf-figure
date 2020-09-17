@@ -73,7 +73,7 @@ def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list):
     figure_data_list = []
     i = 0
     for name, symbol in zip(names[:-1], symbol_list): #drop Meteorology column
-        print (name)
+        # print (name)
         i = i+ 3
         result_dictionary = {}
         event = naToNone(xl.parse(name))
@@ -108,8 +108,8 @@ def OccurenceDataCooking (xl, names, time_field, index, mode, symbol_list):
                 temp.append(event[event[time_field] == date]['Rank'].replace(1, 0).replace(2, 0).replace(3, 0).sum())
             else:
                 temp.append(event_date.count(date))
-        print (distinct_event_date_list)
-        print (temp)
+        # print (distinct_event_date_list)
+        # print (temp)
         result_dictionary['x'] = sorted(distinct_event_date_list)
         result_dictionary['y'] = np.full(len(result_dictionary['x']), i)
         result_dictionary['marker_size'] = sortByTime(result_dictionary['x'], 
