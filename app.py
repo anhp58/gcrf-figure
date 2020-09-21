@@ -143,6 +143,7 @@ def TimeMagnitudeFigure (figure_data_list, title):
             color="#7f7f7f"
         )
     )
+    fig.update_yaxes(showticklabels=False)
     return fig
 
 #main 
