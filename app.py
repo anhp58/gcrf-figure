@@ -177,9 +177,10 @@ VNpolicy = "./data/VN_policy.xlsx"
 symbol_list = changeSymbol()
 
 xl, names = read_excel_sheets(PHILhazard)  
-mag_dict_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
-occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)   
-phil_db = mag_dict_list + occurence_dict_list
+ppl_affected_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
+facilities_list, index = MagnitudeDataCooking (xl, names, 'Fatalities', 'Date', symbol_list)
+occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)
+phil_db = ppl_affected_list + occurence_dict_list
 PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
 
 xl, names = read_excel_sheets(VNpolicy)
