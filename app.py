@@ -15,9 +15,7 @@ import pandas as pd
 from datetime import datetime
 import numpy as np
 
-import os
-
-BUBBLE_SIZE = 30
+BUBBLE_SIZE = 25
 PHIL_LINE = 0
 VN_LINE = 0
 
@@ -58,22 +56,22 @@ def stringToDate (string_arrr):
 
         timestr = "0"*(6 - len(str(timestr))) + str(timestr)
         #convert year from 2 numbers to 4 numbers
-        if int(timestr[-2:]) < 20:
+        if int(timestr[-2:]) <= 20:
             year = str(int(timestr[-2:]) + 2000)
         else:
             year = str(int(timestr[-2:]) + 1900)
         # final.append(datetime.strptime(timestr[2:4] + " " + year, '%m %Y')) #concat month and year
-            final.append(int(year))
+        final.append(int(year))
         # final.append(datetime.strptime(year, '%Y'))
     return final
 
-def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list):
+def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list, index, jump_step, drop_index):
     
     figure_data_list = []
-    i = 0
-    for name, symbol in zip(names[:-1], symbol_list): #drop Meteorology column
+    i = index
+    for name, symbol in zip(names[:-drop_index], symbol_list): #drop drop_index column
         # print (name)
-        i = i+ 3
+        i = i+ jump_step # the jump step
         result_dictionary = {}
         event = naToNone(xl.parse(name))
         
@@ -87,14 +85,14 @@ def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list):
     return figure_data_list, i #i is the next value of x axe
 
 
-def OccurenceDataCooking (xl, names, time_field, index, mode, symbol_list):
+def OccurenceDataCooking (xl, names, time_field, mode, symbol_list, prefix_name_label, index, jump_step):
     
     
     figure_data_list = []
     i = index
     
     for name, symbol in zip(names, symbol_list):
-        i = i+3
+        i = i + jump_step#the jump step
         result_dictionary = {}
         event = xl.parse(name)
         
@@ -113,7 +111,7 @@ def OccurenceDataCooking (xl, names, time_field, index, mode, symbol_list):
         result_dictionary['y'] = np.full(len(result_dictionary['x']), i)
         result_dictionary['marker_size'] = sortByTime(result_dictionary['x'], 
                                                       normalizeData(np.array(temp))*BUBBLE_SIZE)
-        result_dictionary['name'] = "Occurence_{}".format(name)
+        result_dictionary['name'] = "{} of {}".format(prefix_name_label, name)
         result_dictionary['marker_symbol'] = symbol
         figure_data_list.append(result_dictionary)
     return figure_data_list
@@ -147,49 +145,49 @@ def TimeMagnitudeFigure (figure_data_list, title):
     )
     return fig
 
-
-# def dash_call (PHILfig, VNfig):
-#     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-#     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-#     app.layout = html.Div(children=[
-#         html.H1(children='GCRF - Chronological Figure'),
-
-#         # html.Div(children='''
-#         #     Dash: A web application framework for Python.
-#         # '''),
-
-#         dcc.Graph(
-#             id='P',
-#             figure=PHILfig
-#         ),
-#         dcc.Graph(
-#             id='VN',
-#             figure=VNfig
-#         )
-#     ])
-#     return app
-
 #main 
 PHILhazard = "./data/Phil_DB.xlsx"
+PHILpolicy = "./data/Phil_policy.xlsx"
 VNhazard = "./data/VN_DB.xlsx"
 VNpolicy = "./data/VN_policy.xlsx"
 
 symbol_list = changeSymbol()
+#Philippines hazards
+xl, names = read_excel_sheets(PHILhazard)
+phil_ppl_affected_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', \
+                                                      symbol_list, index=1, jump_step=15, drop_index=1)
+    
+phil_facilities_list, index = MagnitudeDataCooking (xl, names, 'Fatalities', 'Date', \
+                                                    symbol_list, index=4, jump_step=15, drop_index=1)
+    
+phil_occurence_dict_list = OccurenceDataCooking(xl, names, 'Date',"", symbol_list, "Occurence", \
+                                                index=7, jump_step=15)
 
-xl, names = read_excel_sheets(PHILhazard)  
-ppl_affected_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
-facilities_list, index = MagnitudeDataCooking (xl, names, 'Fatalities', 'Date', symbol_list)
-occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)
-phil_db = ppl_affected_list + occurence_dict_list
-PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
+#Philippines policy
+xl, names = read_excel_sheets(PHILpolicy)
+phil_policy_rank_dict_list = OccurenceDataCooking(xl, names, 'Year', "rank", symbol_list, "Rank", \
+                                                  index=70, jump_step=3)
 
+#aggreate figure for Phil DB
+phil_db = phil_ppl_affected_list + phil_facilities_list+ phil_occurence_dict_list + phil_policy_rank_dict_list
+PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Hazards and Policies")
+
+#Vietnamese Policy
 xl, names = read_excel_sheets(VNpolicy)
-policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', 0, "rank", symbol_list)
+vn_policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', "rank", symbol_list, "Rank", \
+                                               index=70, jump_step=15)
 
+#Vietnames hazard
 xl, names = read_excel_sheets(VNhazard)
-occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list)
-vn_db = occurence_dict_list + policy_mag_dict_list
-VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
+
+vn_facilities_list, index = MagnitudeDataCooking (xl, names, 'Fatalities', 'Date', symbol_list, \
+                                                  index=1, jump_step=15, drop_index=2)
+
+vn_occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', "", symbol_list, "Occurence", \
+                                              index=7, jump_step=15)
+
+vn_db = vn_facilities_list+ vn_occurence_dict_list + vn_policy_mag_dict_list
+VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Hazards and Policies")
 
 #dash init
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -214,27 +212,4 @@ app.layout = html.Div(children=[
 ])
 
 if __name__ == '__main__':
-    
-    # PHILhazard = "./data/Phil_DB.xlsx"
-    # VNhazard = "./data/VN_DB.xlsx"
-    # VNpolicy = "./data/VN_policy.xlsx"
-    
-    # symbol_list = changeSymbol()
-    
-    # xl, names = read_excel_sheets(PHILhazard)  
-    # mag_dict_list, index = MagnitudeDataCooking (xl, names, 'People affected', 'Date', symbol_list)
-    # occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', index, "", symbol_list)   
-    # phil_db = mag_dict_list + occurence_dict_list
-    # PHILfig = TimeMagnitudeFigure (phil_db, "Philippines Database - Time and Magnitude of Events")
-    
-    # xl, names = read_excel_sheets(VNpolicy)
-    # policy_mag_dict_list = OccurenceDataCooking(xl, names, 'Year', 0, "rank", symbol_list)
-    
-    # xl, names = read_excel_sheets(VNhazard)
-    # occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list)
-    # vn_db = occurence_dict_list + policy_mag_dict_list
-    # VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
-    
-    # app = dash_call (PHILfig, VNfig)
-    # server = app.server
     app.run_server(debug=True)
