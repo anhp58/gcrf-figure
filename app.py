@@ -84,7 +84,7 @@ def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list):
         result_dictionary['name'] = "{} of {}".format(magnitude_field, name)
         result_dictionary['marker_symbol'] = symbol
         figure_data_list.append(result_dictionary)
-    return figure_data_list, i
+    return figure_data_list, i #i is the next value of x axe
 
 
 def OccurenceDataCooking (xl, names, time_field, index, mode, symbol_list):
@@ -148,26 +148,26 @@ def TimeMagnitudeFigure (figure_data_list, title):
     return fig
 
 
-def dash_call (PHILfig, VNfig):
-    external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-    app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-    app.layout = html.Div(children=[
-        html.H1(children='GCRF - Chronological Figure'),
+# def dash_call (PHILfig, VNfig):
+#     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+#     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+#     app.layout = html.Div(children=[
+#         html.H1(children='GCRF - Chronological Figure'),
 
-        # html.Div(children='''
-        #     Dash: A web application framework for Python.
-        # '''),
+#         # html.Div(children='''
+#         #     Dash: A web application framework for Python.
+#         # '''),
 
-        dcc.Graph(
-            id='P',
-            figure=PHILfig
-        ),
-        dcc.Graph(
-            id='VN',
-            figure=VNfig
-        )
-    ])
-    return app
+#         dcc.Graph(
+#             id='P',
+#             figure=PHILfig
+#         ),
+#         dcc.Graph(
+#             id='VN',
+#             figure=VNfig
+#         )
+#     ])
+#     return app
 
 #main 
 PHILhazard = "./data/Phil_DB.xlsx"
@@ -190,9 +190,10 @@ occurence_dict_list = OccurenceDataCooking(xl, names, 'Date', 8, "", symbol_list
 vn_db = occurence_dict_list + policy_mag_dict_list
 VNfig = TimeMagnitudeFigure (vn_db, "Vietnam Database - Time, Occurence of Events and Policy")
 
-#dash
+#dash init
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(title='GCRF Visualization')
 server = app.server
 app.layout = html.Div(children=[
     html.H1(children='GCRF - Chronological Figure'),
