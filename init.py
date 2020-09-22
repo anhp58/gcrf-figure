@@ -132,7 +132,6 @@ def TimeMagnitudeFigure (figure_data_list, title):
     fig.update_layout(
         title=title,
         xaxis_title="Year",
-        yaxis_title=" ",
         font=dict(
             family="Courier New, monospace",
             size=18,
