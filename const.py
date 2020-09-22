@@ -7,7 +7,7 @@ Created on Tue May 26 21:39:12 2020
 
 # -*- coding: utf-8 -*-
 
-BUBBLE_SIZE = 30
+BUBBLE_SIZE = 25
  
 PHIL_HAZARD = "./data/Phil_DB.xlsx"
 PHIL_POLICY = "./data/Phil_policy.xlsx"
