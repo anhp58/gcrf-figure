@@ -4,3 +4,13 @@ Update the code and redeploy
 2. git add.
 3. git commit -m "a description of the changes"
 4. git push heroku master
+
+How to access heroku
+
+1. Install heroku CLI
+2. Login to heroku with email
+3. heroku access --app=gcrf-visualization
+4. git status
+5. git add .
+6. git commit -m "message for the changes"
+7. git push heroku master
