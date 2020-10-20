@@ -1,0 +1,6 @@
+Update the code and redeploy
+
+1. git status
+2. git add.
+3. git commit -m "a description of the changes"
+4. git push heroku master

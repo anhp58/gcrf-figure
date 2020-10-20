@@ -19,7 +19,7 @@ PHILfig, VNfig = genearateFigure(PHIL_HAZARD, PHIL_POLICY, VN_HAZARD, VN_POLICY)
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app = dash.Dash(title='GCRF Visualization')
-server = app.server
+server = app.server # get server variable, this varibale needs to be global varible
 app.layout = html.Div(children=[
     html.H1(children='GCRF - Chronological Figure'),
     dcc.Graph(

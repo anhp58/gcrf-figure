@@ -15,6 +15,12 @@ from const import *
 #from datetime import datetime
 
 def changeSymbol():
+    """Get the symbol list to generate the event for the figure
+        Args:
+            None
+        Returns:
+            symbol list (arr): 12 symbols
+    """
     #old version using default order of symbol list
 # =============================================================================
 #     from plotly.validators.scatter.marker import SymbolValidator
@@ -29,6 +35,11 @@ def changeSymbol():
             'hexagram', 'star', 'diamond', 'hourglass', 'bowtie']
 
 def readExcel(xls_path):
+    """Read the excel file
+        Args: 
+            xls_path (string)
+        Returns: xlsx object and list sheet' name
+    """
     print(f'Loading {xls_path} into pandas')
     xl = pd.ExcelFile(xls_path)
     names = xl.sheet_names
@@ -36,15 +47,41 @@ def readExcel(xls_path):
     return xl, names
 
 def naToNone (df):
+    """Replace na to 0
+        Args:
+            df (dataframe): input dataframe
+        Returns:
+            df (dataframe): removed na value dataframe
+    """
     return df.replace('na', np.nan)
 
 def normalizeData(inarr):
+    """Normalize data value to same range
+        Args:
+            inarr (arr): input array which needs to be normalized
+        Returns:
+            normalized array (arr)
+    """
     return (inarr - min(inarr) + 1e-8) / (max(inarr) + 1e-8 - min(inarr))
 
 def sortByTime (time_list, unsort_list):
+    """Sort one list by the order of the other
+        Args:
+            time_list (list): time list that needs to be sorted for the x axe of the figure
+            unsort_list (list): the value list that needs to be sorted by the time list
+        Returns:
+            sorted lists (list)
+
+    """
     return [x for _,x in sorted(zip(time_list,unsort_list))]
 
 def stringToDate (string_arrr):
+    """Date interpreting from the raw input value
+        Args:
+            string_arrr (list): raw input value
+        Returns:
+            final (list): corrected date with four digits
+    """
     
     final = []
     for timestr in string_arrr:
@@ -61,6 +98,24 @@ def stringToDate (string_arrr):
     return final
 
 def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list, index, jump_step, drop_index):
+    """Create the Magnitude data for the figure visualization
+        Args:
+            xl (object): xl object, collected from readExcel
+            names (list): list of sheet' name of an excel file
+            magnitude_field (string): magnitue criteria - a column in a sheet
+            time_field (string): string value of the time field in a sheet
+            symbol_list (list): symbol list collected from changeSymbol()
+            index (int): initiation axe's value for an event
+            jump_step (int): the distance of two lines in the figure
+            drop_index (int): the number of columns that we drop when loop through the file
+        Returns:
+            figure_data_list (dict) contains:
+                                    x axe: year list
+                                    y axe: same value for all records of an event
+                                    marker_size: value for each symbol size
+                                    name: event name
+                                    marker_symbol: symbol of an event
+    """
     
     figure_data_list = []
     i = index
@@ -84,6 +139,24 @@ def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list, i
 
 
 def FrequencyDataCooking (xl, names, time_field, mode, symbol_list, prefix_name_label, index, jump_step):
+    """Creates the Frequency data for the figure visualization
+        Args:
+            xl (object): xl object, collected from readExcel
+            names (list): list of sheet' name of an excel file
+            time_field (string): string value of the time field in a sheet
+            mode (string): 'normal' for hazard event frequency, 'rank' for policy relevance
+            symbol_list (list): symbol list collected from changeSymbol()
+            prefix_name_model (string): prefix for name of an event
+            index (int): initiation axe's value for an event
+            jump_step (int): the distance of two lines in the figure
+        Returns:
+            figure_data_list (dict) contains:
+                                            x axe: year list
+                                            y axe: same value for all records of an envent
+                                            marker_size: value for each symbol size
+                                            name: event name
+                                            marker_symbol: symbol of an event
+    """
     
     figure_data_list = []
     i = index
@@ -98,8 +171,8 @@ def FrequencyDataCooking (xl, names, time_field, mode, symbol_list, prefix_name_
         
         temp = []
         for date in sorted(distinct_event_date_list):
-            if mode == FREQUENCY_MODE[1]:
-                # 1 and 2 need to be removed when do the sum calculation
+            if mode == FREQUENCY_MODE[1]: # mode = rank for policy 
+                # 1 and 2 need to be removed when do the sum calculation for policy ranking within a year
                 temp.append(event[event[time_field] == date]['Rank'].replace(1, 0).replace(2, 0).sum())
             else:
                 temp.append(event_date.count(date))
@@ -113,6 +186,13 @@ def FrequencyDataCooking (xl, names, time_field, mode, symbol_list, prefix_name_
     return figure_data_list
     
 def TimeMagnitudeFigure (figure_data_list, title):
+    """Generate figure from list of dictionaries
+        Args:
+            figure_data_list
+            title
+        Returns:
+            fig ()
+    """
     
     fig = go.Figure()
     bubble_list = []
@@ -142,6 +222,17 @@ def TimeMagnitudeFigure (figure_data_list, title):
     return fig
 
 def genearateFigure(PHILhazard, PHILpolicy, VNhazard, VNpolicy):
+    """Generates two figures from 01 phil hazard excel file, 01 phil policy excel file, 
+        01 vietnam hazard db, 01 vietnam policy db
+        Args:
+            PHILhazard (string): Phillipines Hazard DB - xlsx path
+            PHILpolicy (string): Phillipines Policy DB - xlsx path
+            VNhazard (string):  Vietnam Hazard DB - xlsx path
+            VNpolicy (string): Vietnam Policy DB - xlsx path
+        Returns:
+            PHILfig (dict): Phillipines figure
+            VNfig (dict): Vietnam figure
+    """
     symbol_list = changeSymbol()
     #Philippines hazards
     xl, names = readExcel(PHILhazard)
