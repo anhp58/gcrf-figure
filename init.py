@@ -82,7 +82,6 @@ def stringToDate (string_arrr):
         Returns:
             final (list): corrected date with four digits
     """
-    
     final = []
     for timestr in string_arrr:
 
@@ -116,7 +115,6 @@ def MagnitudeDataCooking (xl, names, magnitude_field, time_field, symbol_list, i
                                     name: event name
                                     marker_symbol: symbol of an event
     """
-    
     figure_data_list = []
     i = index
     for name, symbol in zip(names[:-drop_index], symbol_list): #drop drop_index column
@@ -157,7 +155,6 @@ def FrequencyDataCooking (xl, names, time_field, mode, symbol_list, prefix_name_
                                             name: event name
                                             marker_symbol: symbol of an event
     """
-    
     figure_data_list = []
     i = index
     
@@ -193,7 +190,6 @@ def TimeMagnitudeFigure (figure_data_list, title):
         Returns:
             fig ()
     """
-    
     fig = go.Figure()
     bubble_list = []
     
